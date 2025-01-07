@@ -1,0 +1,47 @@
+﻿@page "/login"
+@using DataModel.Model
+
+<div class="form-login">
+    <EditForm Model="@Users" OnValidSubmit="HandleLogin">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <img class="mb-4" src="/appicon.png" alt="" height="72">
+        <h1 class="h3 mb-3 fw-normal">Please Login</h1>
+
+        <!-- Username Input -->
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" @bind="Users.Username" placeholder="Username" />
+            <label for="floatingInput">Username</label>
+        </div>
+
+        <!-- Password Input -->
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control" @bind="Users.Password" placeholder="Password" />
+            <label for="floatingPassword">Password</label>
+        </div>
+
+        <!-- Preferred Currency Dropdown -->
+        <div class="form-floating mb-3">
+            <select class="form-select" @bind="Users.PreferredCurrency">
+                <option value="" disabled>Select Currency</option>
+                @foreach (var currency in Currencies)
+                {
+                    <option value="@currency">@currency</option>
+                }
+            </select>
+            <label for="PreferredCurrency">Preferred Currency</label>
+        </div>
+
+        <!-- Error Message -->
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="alert alert-danger">@ErrorMessage</div>
+        }
+
+        <!-- Login Button -->
+        <button class="btn btn-lg btn-primary" type="submit">
+            Login
+        </button>
+    </EditForm>
+</div>

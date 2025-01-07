@@ -1,0 +1,178 @@
+﻿@page "/transactions"
+@inherits TransactionsBase
+
+<MudLayout>
+    <MudDrawer Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent" Class="custom-sidebar" Elevation="0">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h5" Color="Color.Dark">PocketTrack</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" Match="NavLinkMatch.All">
+                <MudText Typo="Typo.body1" Color="Color.Dark">Dashboard</MudText>
+            </MudNavLink>
+            <MudNavLink Href="/transactions" Icon="@Icons.Material.Filled.SwapHorizontalCircle">
+                <MudText Typo="Typo.body1" Color="Color.Dark">Transactions</MudText>
+            </MudNavLink>
+            <MudNavLink Href="/budgets" Icon="@Icons.Material.Filled.AttachMoney">
+                <MudText Typo="Typo.body1" Color="Color.Dark">Budgets</MudText>
+            </MudNavLink>
+            <MudNavLink Href="/debts" Icon="@Icons.Material.Filled.AccountBalanceWallet">
+                <MudText Typo="Typo.body1" Color="Color.Dark">Debts</MudText>
+            </MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent>
+        <div class="content-container" style="padding: 16px;">
+            
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Transactions</h3>
+        <button class="btn btn-primary" @onclick="ToggleAddTransactionForm">
+            <i class="bi bi-plus-circle"></i> New Transaction
+        </button>
+    </div>
+
+    <!-- Display Totals -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <div class="card bg-success text-white text-center">
+                <div class="card-body">
+                    <h5>Total Inflows</h5>
+                    <h2>@TotalInflows.ToString("C")</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white text-center">
+                <div class="card-body">
+                    <h5>Total Outflows</h5>
+                    <h2>@TotalOutflows.ToString("C")</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-warning text-white text-center">
+                <div class="card-body">
+                    <h5>Total Debt</h5>
+                    <h2>@TotalDebts.ToString("C")</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="card bg-info text-white text-center">
+                <div class="card-body">
+                    <h5>Cleared Debt</h5>
+                    <h2>@ClearedDebt.ToString("C")</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-secondary text-white text-center">
+                <div class="card-body">
+                    <h5>Remaining Debt</h5>
+                    <h2>@RemainingDebt.ToString("C")</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Highest/Lowest Transactions -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5>Highest/Lowest Transactions</h5>
+                    <ul>
+                        <li><strong>Highest Inflow:</strong> @HighestInflow?.Amount.ToString("C") (@HighestInflow?.Description)</li>
+                        <li><strong>Lowest Inflow:</strong> @LowestInflow?.Amount.ToString("C") (@LowestInflow?.Description)</li>
+                        <li><strong>Highest Outflow:</strong> @HighestOutflow?.Amount.ToString("C") (@HighestOutflow?.Description)</li>
+                        <li><strong>Lowest Outflow:</strong> @LowestOutflow?.Amount.ToString("C") (@LowestOutflow?.Description)</li>
+                        <li><strong>Highest Debt:</strong> @HighestDebt?.Amount.ToString("C") (@HighestDebt?.Description)</li>
+                        <li><strong>Lowest Debt:</strong> @LowestDebt?.Amount.ToString("C") (@LowestDebt?.Description)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Transaction Form -->
+    @if (showAddTransactionForm || editingTransaction != null)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">@((editingTransaction != null) ? "Edit Transaction" : "Add New Transaction")</h5>
+                <form>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <input type="text" id="description" class="form-control" @bind="currentTransaction.Description" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount</label>
+                        <input type="number" id="amount" class="form-control" @bind="currentTransaction.Amount" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="date" class="form-label">Date</label>
+                        <input type="date" id="date" class="form-control" @bind="currentTransaction.Date" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="type" class="form-label">Type</label>
+                        <select id="type" class="form-control" @bind="currentTransaction.Type">
+                            <option value="Income">Income</option>
+                            <option value="Expense">Expense</option>
+                            <option value="Debt">Debt</option>
+                            <option value="Debt Payment">Debt Payment</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-secondary me-2" @onclick="CancelTransactionForm">Cancel</button>
+                        <button type="button" class="btn btn-success" @onclick="SaveTransaction">Save Transaction</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    <!-- Transaction List -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Transaction List</h5>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var transaction in Transactions)
+                    {
+                        <tr>
+                            <td>@transaction.Description</td>
+                            <td>@transaction.Date.ToString("yyyy-MM-dd")</td>
+                            <td>@transaction.Amount.ToString("C")</td>
+                            <td class="@(transaction.Type == "Income" ? "text-success" : transaction.Type == "Expense" ? "text-danger" : "text-warning")">
+                                @transaction.Type
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm" @onclick="() => EditTransaction(transaction)">Edit</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteTransaction(transaction)">Delete</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

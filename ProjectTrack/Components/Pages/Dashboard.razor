@@ -1,0 +1,81 @@
+﻿@page "/dashboard"
+
+<MudLayout>
+    <!-- Sidebar -->
+    <MudDrawer Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent" Class="custom-sidebar">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h5" Color="Color.Dark" Style="margin-left: 10px;">PocketTrack</MudText>
+        </MudDrawerHeader>
+        <MudNavMenu>
+            <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" Match="NavLinkMatch.All">
+                <MudText Typo="Typo.body1" Color="Color.Dark">Dashboard</MudText>
+            </MudNavLink>
+            <MudNavLink Href="/transactions" Icon="@Icons.Material.Filled.SwapHorizontalCircle">
+                <MudText Typo="Typo.body1" Color="Color.Dark">Transactions</MudText>
+            </MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <!-- Main Content -->
+    <MudMainContent>
+        <div class="container mt-4">
+            <h2 class="text-primary text-center">Dashboard Overview</h2>
+
+
+            <!-- Stat Cards -->
+            <div class="row mb-5">
+                <div class="col-md-4">
+                    <div class="card stat-card bg-success text-white text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Inflows</h5>
+                            <h2>$@TotalInflows</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card bg-danger text-white text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Outflows</h5>
+                            <h2>$@TotalOutflows</h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stat-card bg-warning text-white text-center">
+                        <div class="card-body">
+                            <h5 class="card-title">Total Debts</h5>
+                            <h2>$@TotalDebts</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div >
+    <div/>
+
+            <!-- Graphs -->
+          
+      
+    </MudMainContent>
+</MudLayout>
+<div>
+    <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
+</div>
+
+@code {
+    private decimal TotalInflows => TransactionService.Transactions.Where(t => t.Type == "Income").Sum(t => t.Amount);
+    private decimal TotalOutflows => TransactionService.Transactions.Where(t => t.Type == "Expense").Sum(t => Math.Abs(t.Amount));
+    private decimal TotalDebts => TransactionService.Transactions.Where(t => t.Type == "Debt").Sum(t => Math.Abs(t.Amount));
+
+    [Inject]
+    public TransactionService TransactionService { get; set; }
+
+    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+
+    public List<ChartSeries> Series = new List<ChartSeries>()
+    {
+        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
+        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
+        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
+    };
+    public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
+}

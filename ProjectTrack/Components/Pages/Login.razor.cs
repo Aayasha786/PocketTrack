@@ -20,14 +20,18 @@ namespace ProjectTrack.Components.Pages
                 return;
             }
 
-            if (!UserService.Login(Users))
+            if (!UserService.Login(Users)) // UserService is globally available
             {
                 ErrorMessage = "Invalid username or password.";
             }
             else
             {
+                // Mark the user as authenticated
+                AuthService.Authenticate(); // AuthService is globally available
                 ErrorMessage = null;
-                Nav.NavigateTo("/dashboard");
+
+                // Redirect to the homepage
+                Nav.NavigateTo("/dashboard", true); // Nav (NavigationManager) is globally available
             }
         }
     }

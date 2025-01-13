@@ -2,177 +2,227 @@
 @inherits TransactionsBase
 
 <MudLayout>
-    <MudDrawer Open="true" Anchor="Anchor.Start" Variant="DrawerVariant.Persistent" Class="custom-sidebar" Elevation="0">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h5" Color="Color.Dark">PocketTrack</MudText>
-        </MudDrawerHeader>
-        <MudNavMenu>
-            <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard" Match="NavLinkMatch.All">
-                <MudText Typo="Typo.body1" Color="Color.Dark">Dashboard</MudText>
-            </MudNavLink>
-            <MudNavLink Href="/transactions" Icon="@Icons.Material.Filled.SwapHorizontalCircle">
-                <MudText Typo="Typo.body1" Color="Color.Dark">Transactions</MudText>
-            </MudNavLink>
-            <MudNavLink Href="/budgets" Icon="@Icons.Material.Filled.AttachMoney">
-                <MudText Typo="Typo.body1" Color="Color.Dark">Budgets</MudText>
-            </MudNavLink>
-            <MudNavLink Href="/debts" Icon="@Icons.Material.Filled.AccountBalanceWallet">
-                <MudText Typo="Typo.body1" Color="Color.Dark">Debts</MudText>
-            </MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
-
     <MudMainContent>
-        <div class="content-container" style="padding: 16px;">
-            
-        </div>
-    </MudMainContent>
-</MudLayout>
+        <div class="container mt-4">
+            <h3 class="text-primary">Transactions</h3>
 
-
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Transactions</h3>
-        <button class="btn btn-primary" @onclick="ToggleAddTransactionForm">
-            <i class="bi bi-plus-circle"></i> New Transaction
-        </button>
-    </div>
-
-    <!-- Display Totals -->
-    <div class="row mb-3">
-        <div class="col-md-4">
-            <div class="card bg-success text-white text-center">
-                <div class="card-body">
-                    <h5>Total Inflows</h5>
-                    <h2>@TotalInflows.ToString("C")</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-danger text-white text-center">
-                <div class="card-body">
-                    <h5>Total Outflows</h5>
-                    <h2>@TotalOutflows.ToString("C")</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-warning text-white text-center">
-                <div class="card-body">
-                    <h5>Total Debt</h5>
-                    <h2>@TotalDebts.ToString("C")</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <div class="card bg-info text-white text-center">
-                <div class="card-body">
-                    <h5>Cleared Debt</h5>
-                    <h2>@ClearedDebt.ToString("C")</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card bg-secondary text-white text-center">
-                <div class="card-body">
-                    <h5>Remaining Debt</h5>
-                    <h2>@RemainingDebt.ToString("C")</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Highest/Lowest Transactions -->
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5>Highest/Lowest Transactions</h5>
-                    <ul>
-                        <li><strong>Highest Inflow:</strong> @HighestInflow?.Amount.ToString("C") (@HighestInflow?.Description)</li>
-                        <li><strong>Lowest Inflow:</strong> @LowestInflow?.Amount.ToString("C") (@LowestInflow?.Description)</li>
-                        <li><strong>Highest Outflow:</strong> @HighestOutflow?.Amount.ToString("C") (@HighestOutflow?.Description)</li>
-                        <li><strong>Lowest Outflow:</strong> @LowestOutflow?.Amount.ToString("C") (@LowestOutflow?.Description)</li>
-                        <li><strong>Highest Debt:</strong> @HighestDebt?.Amount.ToString("C") (@HighestDebt?.Description)</li>
-                        <li><strong>Lowest Debt:</strong> @LowestDebt?.Amount.ToString("C") (@LowestDebt?.Description)</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add/Edit Transaction Form -->
-    @if (showAddTransactionForm || editingTransaction != null)
-    {
-        <div class="card mb-3">
-            <div class="card-body">
-                <h5 class="card-title">@((editingTransaction != null) ? "Edit Transaction" : "Add New Transaction")</h5>
-                <form>
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" id="description" class="form-control" @bind="currentTransaction.Description" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="amount" class="form-label">Amount</label>
-                        <input type="number" id="amount" class="form-control" @bind="currentTransaction.Amount" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="date" class="form-label">Date</label>
-                        <input type="date" id="date" class="form-control" @bind="currentTransaction.Date" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="type" class="form-label">Type</label>
-                        <select id="type" class="form-control" @bind="currentTransaction.Type">
+            <!-- Filter, Sort, and Search Section -->
+            <div class="mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="filterType" class="form-label">Filter by Type</label>
+                        <select id="filterType" class="form-control" @bind="FilterType">
+                            <option value="">All</option>
                             <option value="Income">Income</option>
                             <option value="Expense">Expense</option>
                             <option value="Debt">Debt</option>
                             <option value="Debt Payment">Debt Payment</option>
                         </select>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-secondary me-2" @onclick="CancelTransactionForm">Cancel</button>
-                        <button type="button" class="btn btn-success" @onclick="SaveTransaction">Save Transaction</button>
+
+                    <div class="col-md-3">
+                        <label for="startDate" class="form-label">Start Date</label>
+                        <input type="date" id="startDate" class="form-control" @bind="StartDate" />
                     </div>
-                </form>
+
+                  
+                    <div class="col-md-4">
+                        <label for="sortOrder" class="form-label">Sort by Date</label>
+                        <select id="sortOrder" class="form-control" @bind="SortOrder">
+                            <option value="Ascending">Ascending</option>
+                            <option value="Descending">Descending</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label for="searchQuery" class="form-label">Search by Description</label>
+                        <input id="searchQuery" class="form-control" @bind="SearchQuery" placeholder="Enter keywords..." />
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" @onclick="ApplyFilters">Apply Filters</button>
+            </div>
+
+            <!-- Add/Edit Transaction Button -->
+            <button class="btn btn-primary mb-3" @onclick="ToggleAddTransactionForm">
+                <i class="bi bi-plus-circle"></i> New Transaction
+            </button>
+
+            <!-- Add/Edit Transaction Form -->
+            @if (showAddTransactionForm)
+            {
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@((editingTransaction != null) ? "Edit Transaction" : "Add New Transaction")</h5>
+                        <form>
+                            <div class="mb-3">
+                                <label>Description</label>
+                                <input class="form-control" @bind="currentTransaction.Description" />
+                            </div>
+                            <div class="mb-3">
+                                <label>Amount</label>
+                                <input type="number" class="form-control" @bind="currentTransaction.Amount" />
+                            </div>
+                            <div class="mb-3">
+                                <label>Date</label>
+                                <input type="date" class="form-control" @bind="currentTransaction.Date" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select id="type" class="form-control" @bind="currentTransaction.Type">
+                                    <option value="Income">Income</option>
+                                    <option value="Expense">Expense</option>
+                                    <option value="Debt">Debt</option>
+                                    <option value="Debt Payment">Debt Payment</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label>Tags</label>
+                                <input class="form-control" placeholder="Enter tags separated by commas"
+                                       @bind="currentTagsInput" />
+                                <small class="form-text text-muted">Separate multiple tags with commas.</small>
+                            </div>
+                            <div class="mb-3">
+                                <label>Note</label>
+                                <textarea class="form-control" placeholder="Optional note..." @bind="currentTransaction.Note"></textarea>
+                            </div>
+
+                            <button type="button" class="btn btn-success me-2" @onclick="SaveTransaction">Save</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CancelTransactionForm">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <!-- Transaction List -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Transaction List</h5>
+                    <p><strong>Total Transactions:</strong> @FilteredTransactions.Count</p>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Tags</th>
+                                <th>Note</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var transaction in FilteredTransactions)
+                            {
+                                <tr>
+                                    <td>@transaction.Description</td>
+                                    <td>@transaction.Amount.ToString("C")</td>
+                                    <td>@transaction.Date.ToString("yyyy-MM-dd")</td>
+                                    <td>@transaction.Type</td>
+                                    <td>@string.Join(", ", transaction.Tags)</td>
+                                    <td>@transaction.Note</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" @onclick="() => EditTransaction(transaction)">Edit</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteTransaction(transaction)">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
+       
+    </MudMainContent>
+</MudLayout>
+
+@code {
+   
+    private string FilterType { get; set; } = "";
+    private string SearchQuery { get; set; } = "";
+    private string SortOrder { get; set; } = "Ascending";
+    private string currentTagsInput { get; set; } = "";
+    private DateTime? StartDate { get; set; }
+    private DateTime? EndDate { get; set; }
+
+    private List<TransactionModel> FilteredTransactions => ApplySorting(ApplySearch(ApplyDateFilter(ApplyFilter(Transactions))));
+
+    protected void ApplyFilters()
+    {
+        StateHasChanged();
     }
 
-    <!-- Transaction List -->
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Transaction List</h5>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Date</th>
-                        <th>Amount</th>
-                        <th>Type</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var transaction in Transactions)
-                    {
-                        <tr>
-                            <td>@transaction.Description</td>
-                            <td>@transaction.Date.ToString("yyyy-MM-dd")</td>
-                            <td>@transaction.Amount.ToString("C")</td>
-                            <td class="@(transaction.Type == "Income" ? "text-success" : transaction.Type == "Expense" ? "text-danger" : "text-warning")">
-                                @transaction.Type
-                            </td>
-                            <td>
-                                <button class="btn btn-warning btn-sm" @onclick="() => EditTransaction(transaction)">Edit</button>
-                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteTransaction(transaction)">Delete</button>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+    private List<TransactionModel> ApplyFilter(List<TransactionModel> transactions)
+    {
+        return string.IsNullOrEmpty(FilterType) ? transactions : transactions.Where(t => t.Type == FilterType).ToList();
+    }
+
+    private List<TransactionModel> ApplySearch(List<TransactionModel> transactions)
+    {
+        return string.IsNullOrEmpty(SearchQuery)
+            ? transactions
+            : transactions.Where(t => t.Description.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+    }
+
+    private List<TransactionModel> ApplyDateFilter(List<TransactionModel> transactions)
+    {
+        return transactions
+            .Where(t => !StartDate.HasValue || t.Date >= StartDate.Value)
+            .Where(t => !EndDate.HasValue || t.Date <= EndDate.Value)
+            .ToList();
+    }
+
+    private List<TransactionModel> ApplySorting(List<TransactionModel> transactions)
+    {
+        return SortOrder == "Ascending"
+            ? transactions.OrderBy(t => t.Date).ToList()
+            : transactions.OrderByDescending(t => t.Date).ToList();
+    }
+
+    private void SaveTransaction()
+    {
+        if (!string.IsNullOrEmpty(currentTagsInput))
+        {
+            currentTransaction.Tags = currentTagsInput.Split(",")
+                .Select(tag => tag.Trim())
+                .Where(tag => !string.IsNullOrWhiteSpace(tag))
+                .ToList();
+        }
+
+        if (editingTransaction != null)
+        {
+            editingTransaction.Description = currentTransaction.Description;
+            editingTransaction.Amount = currentTransaction.Amount;
+            editingTransaction.Date = currentTransaction.Date;
+            editingTransaction.Type = currentTransaction.Type;
+            editingTransaction.Tags = currentTransaction.Tags;
+            editingTransaction.Note = currentTransaction.Note;
+        }
+        else
+        {
+            Transactions.Add(new TransactionModel
+                {
+                    Description = currentTransaction.Description,
+                    Amount = currentTransaction.Amount,
+                    Date = currentTransaction.Date,
+                    Type = currentTransaction.Type,
+                    Tags = currentTransaction.Tags,
+                    Note = currentTransaction.Note
+                });
+        }
+
+        CancelTransactionForm();
+    }
+
+    protected void CancelTransactionForm()
+    {
+        currentTransaction = new TransactionModel
+            {
+                Date = DateTime.Now,
+                Type = "Income"
+            };
+        currentTagsInput = "";
+        editingTransaction = null;
+        showAddTransactionForm = false;
+    }
+
+}

@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using System.Net.Http.Json
+@using DataAccess.Service
 @using DataAccess.Service.Interface
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
@@ -9,7 +10,12 @@
 @using ProjectTrack
 @using ProjectTrack.Components
 @using ProjectTrack.Components.Layout
+@using ProjectTrack.Models
+@using ProjectTrack.Service
 @using MudBlazor
 
 @inject NavigationManager Nav
 @inject IUserInterface UserService
+@inject AuthService AuthService
+@inject TransactionService TransactionService
+

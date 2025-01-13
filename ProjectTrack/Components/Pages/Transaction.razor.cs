@@ -1,67 +1,28 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using ProjectTrack.Models;
+using ProjectTrack.Service;
 using MudBlazor;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Components;
 
 namespace ProjectTrack.Components.Pages
 {
     public partial class TransactionsBase : ComponentBase
     {
-        [Inject] ISnackbar Snackbar { get; set; }
+        [Inject] public TransactionService TransactionService { get; set; }
+        [Inject] public ISnackbar Snackbar { get; set; }
 
-        public class TransactionModel
-        {
-            public string Description { get; set; }
-            public DateTime Date { get; set; }
-            public decimal Amount { get; set; }
-            public string Type { get; set; } // Income, Expense, Debt, or Debt Payment
-        }
+        protected List<TransactionModel> Transactions => TransactionService.Transactions;
+        protected TransactionModel currentTransaction { get; set; } = new TransactionModel { Date = DateTime.Now, Type = "Income" };
+        protected TransactionModel? editingTransaction { get; set; }
+        protected bool showAddTransactionForm { get; set; } = false;
 
-        protected List<TransactionModel> Transactions = new();
-        protected TransactionModel? currentTransaction = null;
-        protected TransactionModel? editingTransaction = null;
-        protected bool showAddTransactionForm = false;
-
-        protected decimal TotalInflows => Transactions.Where(t => t.Type == "Income").Sum(t => t.Amount);
-        protected decimal TotalOutflows => Transactions.Where(t => t.Type == "Expense").Sum(t => t.Amount);
-        protected decimal TotalDebts => Transactions.Where(t => t.Type == "Debt").Sum(t => t.Amount);
-        protected decimal ClearedDebt => Transactions.Where(t => t.Type == "Debt Payment").Sum(t => t.Amount);
-        protected decimal RemainingDebt => TotalDebts - ClearedDebt;
-
-        protected TransactionModel? HighestInflow => Transactions
-             .Where(t => t.Type == "Income")
-             .OrderByDescending(t => t.Amount)
-             .FirstOrDefault();
-
-        protected TransactionModel? LowestInflow => Transactions
-            .Where(t => t.Type == "Income")
-            .OrderBy(t => t.Amount)
-            .FirstOrDefault();
-
-        protected TransactionModel? HighestOutflow => Transactions
-            .Where(t => t.Type == "Expense")
-            .OrderByDescending(t => t.Amount)
-            .FirstOrDefault();
-
-        protected TransactionModel? LowestOutflow => Transactions
-            .Where(t => t.Type == "Expense")
-            .OrderBy(t => t.Amount)
-            .FirstOrDefault();
-
-        protected TransactionModel? HighestDebt => Transactions
-            .Where(t => t.Type == "Debt")
-            .OrderByDescending(t => t.Amount)
-            .FirstOrDefault();
-
-        protected TransactionModel? LowestDebt => Transactions
-            .Where(t => t.Type == "Debt")
-            .OrderBy(t => t.Amount)
-            .FirstOrDefault();
         protected void ToggleAddTransactionForm()
         {
-            showAddTransactionForm = true;
-            currentTransaction = new TransactionModel { Date = DateTime.Now, Type = "Income" };
+            showAddTransactionForm = !showAddTransactionForm;
+            if (!showAddTransactionForm)
+            {
+                currentTransaction = new TransactionModel { Date = DateTime.Now, Type = "Income" };
+                editingTransaction = null;
+            }
         }
 
         protected void EditTransaction(TransactionModel transaction)
@@ -70,104 +31,79 @@ namespace ProjectTrack.Components.Pages
             currentTransaction = new TransactionModel
             {
                 Description = transaction.Description,
-                Date = transaction.Date,
                 Amount = transaction.Amount,
+                Date = transaction.Date,
                 Type = transaction.Type
             };
-        }
-
-        protected void SaveTransaction()
-        {
-            if (currentTransaction == null) return;
-
-            if (!string.IsNullOrWhiteSpace(currentTransaction.Description) && currentTransaction.Amount > 0)
-            {
-                if (editingTransaction != null)
-                {
-                    editingTransaction.Description = currentTransaction.Description;
-                    editingTransaction.Date = currentTransaction.Date;
-                    editingTransaction.Amount = currentTransaction.Amount;
-                    editingTransaction.Type = currentTransaction.Type;
-                    Snackbar.Add("Transaction updated successfully!", Severity.Success);
-                }
-                else
-                {
-                    if (currentTransaction.Type == "Expense")
-                    {
-                        HandleExpense(currentTransaction);
-                    }
-                    else
-                    {
-                        Transactions.Add(new TransactionModel
-                        {
-                            Description = currentTransaction.Description,
-                            Date = currentTransaction.Date,
-                            Amount = currentTransaction.Amount,
-                            Type = currentTransaction.Type
-                        });
-                    }
-
-                    if (TotalOutflows > TotalInflows)
-                    {
-                        Snackbar.Add("Warning: Total outflows exceed total inflows!", Severity.Warning);
-                    }
-
-                    Snackbar.Add("New transaction added successfully!", Severity.Success);
-                }
-
-                CancelTransactionForm();
-            }
-        }
-
-        private void HandleExpense(TransactionModel expense)
-        {
-            // Calculate remaining expense to deduct from inflows
-            decimal remainingExpense = expense.Amount;
-
-            // Iterate through inflows in chronological order
-            foreach (var inflow in Transactions
-                .Where(t => t.Type == "Income" && t.Amount > 0)
-                .OrderBy(t => t.Date))
-            {
-                if (remainingExpense <= inflow.Amount)
-                {
-                    inflow.Amount -= remainingExpense;
-                    remainingExpense = 0;
-                    break;
-                }
-                else
-                {
-                    remainingExpense -= inflow.Amount;
-                    inflow.Amount = 0;
-                }
-            }
-
-            if (remainingExpense > 0)
-            {
-                Snackbar.Add("Warning: Not enough inflows to cover this expense. Some inflows are insufficient.", Severity.Warning);
-            }
-
-            // Add the expense to the transaction list
-            Transactions.Add(new TransactionModel
-            {
-                Description = expense.Description,
-                Date = expense.Date,
-                Amount = expense.Amount,
-                Type = "Expense"
-            });
-        }
-
-        protected void CancelTransactionForm()
-        {
-            currentTransaction = null;
-            editingTransaction = null;
-            showAddTransactionForm = false;
+            showAddTransactionForm = true;
         }
 
         protected void DeleteTransaction(TransactionModel transaction)
         {
-            Transactions.Remove(transaction);
-            Snackbar.Add("Transaction deleted successfully.", Severity.Info);
+            TransactionService.RemoveTransaction(transaction);
+            Snackbar.Add("Transaction deleted successfully!", Severity.Info);
         }
+       
+
+
+        protected void SaveTransaction()
+        {
+            if (currentTransaction.Type == "Expense" && currentTransaction.Amount > TransactionService.TotalInflows)
+            {
+                Snackbar.Add("Error: Expense exceeds total available income!", Severity.Error);
+                return;
+            }
+
+            if (editingTransaction != null)
+            {
+                editingTransaction.Description = currentTransaction.Description;
+                editingTransaction.Amount = currentTransaction.Amount;
+                editingTransaction.Date = currentTransaction.Date;
+                editingTransaction.Type = currentTransaction.Type;
+
+                if (currentTransaction.Type == "Expense")
+                {
+                    DeductIncome(currentTransaction.Amount);
+                }
+
+                Snackbar.Add("Transaction updated successfully!", Severity.Success);
+            }
+            else
+            {
+                if (currentTransaction.Type == "Expense")
+                {
+                    DeductIncome(currentTransaction.Amount);
+                }
+
+                TransactionService.AddTransaction(currentTransaction);
+                Snackbar.Add("New transaction added successfully!", Severity.Success);
+            }
+
+            ToggleAddTransactionForm();
+        }
+       
+        protected void DeductIncome(decimal expenseAmount)
+        {
+            var remainingExpense = expenseAmount;
+
+            foreach (var income in TransactionService.Transactions
+                .Where(t => t.Type == "Income" && t.Amount > 0)
+                .OrderBy(t => t.Date))
+            {
+                if (remainingExpense <= income.Amount)
+                {
+                    income.Amount -= remainingExpense;
+                    break;
+                }
+                else
+                {
+                    remainingExpense -= income.Amount;
+                    income.Amount = 0;
+                }
+            }
+        }
+
+       
+
     }
 }

@@ -29,6 +29,8 @@ namespace ProjectTrack
             builder.Services.AddBlazorWebViewDeveloperTools();
             builder.Logging.AddDebug();
             builder.Services.AddSingleton<TransactionService>();
+           
+            builder.Services.AddSingleton<AuthService>();
 
 #endif
 

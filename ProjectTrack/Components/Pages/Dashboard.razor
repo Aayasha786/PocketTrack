@@ -2,154 +2,170 @@
 
 <MudLayout>
     <MudMainContent Style="padding: 20px;">
-        <div class="content-container" style="max-width: 1200px; margin: 0 auto;">
-            <h2 class="text-primary text-center">Dashboard Overview</h2>
+        <!-- Light greenish background applied here -->
+        <div class="dashboard-main-content">
+            <div class="content-container">
+                <h2 class="text-primary text-center">Dashboard Overview</h2>
 
-            <!-- Financial Overview -->
-            <div class="row mb-5">
-                <div class="col-md-3">
-                    <div class="card stat-card bg-success text-white text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Inflows</h5>
-                            <h2>@TransactionService.TotalInflows.ToString("C")</h2>
-                        </div>
+                <!-- Financial Overview -->
+                <div class="row mb-5">
+                    <div class="col-md-2">
+                        <MudPaper Class="stat-card inflows-card">
+                            <h5>Total Inflows</h5>
+                            <MudText Typo="Typo.h4">@TransactionService.TotalInflows.ToString("C")</MudText>
+                        </MudPaper>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stat-card bg-danger text-white text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Outflows</h5>
-                            <h2>@TransactionService.TotalOutflows.ToString("C")</h2>
-                        </div>
+                    <div class="col-md-2">
+                        <MudPaper Class="stat-card outflows-card">
+                            <h5>Total Outflows</h5>
+                            <MudText Typo="Typo.h4">@TransactionService.TotalOutflows.ToString("C")</MudText>
+                        </MudPaper>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stat-card bg-primary text-white text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Total Debt</h5>
-                            <h2>@TransactionService.TotalDebt.ToString("C")</h2>
-                        </div>
+                    <div class="col-md-2">
+                        <MudPaper Class="stat-card debt-card">
+                            <h5>Total Debt</h5>
+                            <MudText Typo="Typo.h4">@TransactionService.TotalDebt.ToString("C")</MudText>
+                        </MudPaper>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card stat-card bg-info text-white text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Cleared Debt</h5>
-                            <h2>@TransactionService.ClearedDebt.ToString("C")</h2>
-                        </div>
+                    <div class="col-md-2">
+                        <MudPaper Class="stat-card cleared-debt-card">
+                            <h5>Cleared Debt</h5>
+                            <MudText Typo="Typo.h4">@TransactionService.ClearedDebt.ToString("C")</MudText>
+                        </MudPaper>
+                    </div>
+                    <div class="col-md-2">
+                        <MudPaper Class="stat-card pending-debt-card">
+                            <h5>Pending Debt</h5>
+                            <MudText Typo="Typo.h4">@PendingDebt.ToString("C")</MudText>
+                        </MudPaper>
                     </div>
                 </div>
 
-                <div class="col-md-3">
-                    <div class="card stat-card bg-warning text-white text-center">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending Debt</h5>
-                            <h2>@TransactionService.PendingDebt.ToString("C")</h2>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Highest/Lowest Transactions -->
-            <div class="row mb-5">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
+                <!-- Highest/Lowest Transactions -->
+                <div class="row mb-5">
+                    <div class="col-12">
+                        <MudPaper Class="pa-4" Elevation="4">
                             <h5>Highest/Lowest Transactions</h5>
-                            <ul>
-                                <li><strong>Highest Inflow:</strong> @HighestInflow?.Amount.ToString("C") (@HighestInflow?.Description)</li>
-                                <li><strong>Lowest Inflow:</strong> @LowestInflow?.Amount.ToString("C") (@LowestInflow?.Description)</li>
-                                <li><strong>Highest Outflow:</strong> @HighestOutflow?.Amount.ToString("C") (@HighestOutflow?.Description)</li>
-                                <li><strong>Lowest Outflow:</strong> @LowestOutflow?.Amount.ToString("C") (@LowestOutflow?.Description)</li>
-                                <li><strong>Highest Debt:</strong> @HighestDebt?.Amount.ToString("C") (@HighestDebt?.Description)</li>
-                                <li><strong>Lowest Debt:</strong> @LowestDebt?.Amount.ToString("C") (@LowestDebt?.Description)</li>
-                            </ul>
-                        </div>
+                            <MudList T="string">
+                                <MudListItem>
+                                    <MudText Typo="Typo.body1">Highest Inflow: @HighestInflow?.Amount.ToString("C") (@HighestInflow?.Description)</MudText>
+                                </MudListItem>
+                                <MudListItem>
+                                    <MudText Typo="Typo.body1">Lowest Inflow: @LowestInflow?.Amount.ToString("C") (@LowestInflow?.Description)</MudText>
+                                </MudListItem>
+                                <MudListItem>
+                                    <MudText Typo="Typo.body1">Highest Outflow: @HighestOutflow?.Amount.ToString("C") (@HighestOutflow?.Description)</MudText>
+                                </MudListItem>
+                                <MudListItem>
+                                    <MudText Typo="Typo.body1">Lowest Outflow: @LowestOutflow?.Amount.ToString("C") (@LowestOutflow?.Description)</MudText>
+                                </MudListItem>
+                                <MudListItem>
+                                    <MudText Typo="Typo.body1">Highest Debt: @HighestDebt?.Amount.ToString("C") (@HighestDebt?.Description)</MudText>
+                                </MudListItem>
+                                <MudListItem>
+                                    <MudText Typo="Typo.body1">Lowest Debt: @LowestDebt?.Amount.ToString("C") (@LowestDebt?.Description)</MudText>
+                                </MudListItem>
+                            </MudList>
+                        </MudPaper>
                     </div>
                 </div>
-            </div>
 
-            <!-- Top Transactions -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
+                <!-- Top Transactions -->
+                <div class="row">
+                    <div class="col-12">
+                        <MudPaper Class="pa-4" Elevation="4">
                             <h5>Top Transactions</h5>
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Description</th>
-                                        <th>Amount</th>
-                                        <th>Date</th>
-                                        <th>Type</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var transaction in TopTransactions)
-                                    {
-                                        <tr>
-                                            <td>@transaction.Description</td>
-                                            <td>@transaction.Amount.ToString("C")</td>
-                                            <td>@transaction.Date.ToString("yyyy-MM-dd")</td>
-                                            <td>@transaction.Type</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                            <MudTable Items="@TopTransactions" T="TransactionModel">
+                                <HeaderContent>
+                                    <MudTh>Description</MudTh>
+                                    <MudTh>Amount</MudTh>
+                                    <MudTh>Date</MudTh>
+                                    <MudTh>Type</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Description">@context.Description</MudTd>
+                                    <MudTd DataLabel="Amount">@context.Amount.ToString("C")</MudTd>
+                                    <MudTd DataLabel="Date">@context.Date.ToString("yyyy-MM-dd")</MudTd>
+                                    <MudTd DataLabel="Type">@context.Type</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        </MudPaper>
                     </div>
+                </div>
+
+                <!-- Bar Chart -->
+                <div class="mt-5">
+                    <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels" Width="100%" Height="350px" />
                 </div>
             </div>
         </div>
-        <div>
-            <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" @bind-SelectedIndex="Index" XAxisLabels="@XAxisLabels" Width="100%" Height="350px"></MudChart>
-        </div>
-        <MudText Typo="Typo.h6">Selected portion of the chart: @Index</MudText>
     </MudMainContent>
 </MudLayout>
 
 @code {
+    private IEnumerable<TransactionModel> TopTransactions;
+    private TransactionModel? HighestInflow;
+    private TransactionModel? LowestInflow;
+    private TransactionModel? HighestOutflow;
+    private TransactionModel? LowestOutflow;
+    private TransactionModel? HighestDebt;
+    private TransactionModel? LowestDebt;
 
-    private int Index = -1; //default value cannot be 0 -> first selectedindex is 0.
+    private decimal PendingDebt;
 
-    public List<ChartSeries> Series = new List<ChartSeries>()
-    {
-        new ChartSeries() { Name = "United States", Data = new double[] { 40, 20, 25, 27, 46, 60, 48, 80, 15 } },
-        new ChartSeries() { Name = "Germany", Data = new double[] { 19, 24, 35, 13, 28, 15, 13, 16, 31 } },
-        new ChartSeries() { Name = "Sweden", Data = new double[] { 8, 6, 11, 13, 4, 16, 10, 16, 18 } },
-    };
+    public List<ChartSeries> Series { get; set; } = new List<ChartSeries>();
     public string[] XAxisLabels = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep" };
-    private TransactionModel? HighestInflow => TransactionService.Transactions
-        .Where(t => t.Type == "Income")
-        .OrderByDescending(t => t.Amount)
-        .FirstOrDefault();
 
-    private TransactionModel? LowestInflow => TransactionService.Transactions
-        .Where(t => t.Type == "Income")
-        .OrderBy(t => t.Amount)
-        .FirstOrDefault();
+    protected override void OnInitialized()
+    {
+        TopTransactions = TransactionService.Transactions
+            .OrderByDescending(t => t.Amount)
+            .Take(5);
 
-    private TransactionModel? HighestOutflow => TransactionService.Transactions
-        .Where(t => t.Type == "Expense")
-        .OrderByDescending(t => t.Amount)
-        .FirstOrDefault();
+        HighestInflow = TransactionService.Transactions
+            .Where(t => t.Type == "Income")
+            .OrderByDescending(t => t.Amount)
+            .FirstOrDefault();
 
-    private TransactionModel? LowestOutflow => TransactionService.Transactions
-        .Where(t => t.Type == "Expense")
-        .OrderBy(t => t.Amount)
-        .FirstOrDefault();
+        LowestInflow = TransactionService.Transactions
+            .Where(t => t.Type == "Income")
+            .OrderBy(t => t.Amount)
+            .FirstOrDefault();
 
-    private TransactionModel? HighestDebt => TransactionService.Transactions
-        .Where(t => t.Type == "Debt")
-        .OrderByDescending(t => t.Amount)
-        .FirstOrDefault();
+        HighestOutflow = TransactionService.Transactions
+            .Where(t => t.Type == "Expense")
+            .OrderByDescending(t => t.Amount)
+            .FirstOrDefault();
 
-    private TransactionModel? LowestDebt => TransactionService.Transactions
-        .Where(t => t.Type == "Debt")
-        .OrderBy(t => t.Amount)
-        .FirstOrDefault();
+        LowestOutflow = TransactionService.Transactions
+            .Where(t => t.Type == "Expense")
+            .OrderBy(t => t.Amount)
+            .FirstOrDefault();
 
-    private IEnumerable<TransactionModel> TopTransactions => TransactionService.Transactions
-        .OrderByDescending(t => t.Amount)
-        .Take(5);
+        HighestDebt = TransactionService.Transactions
+            .Where(t => t.Type == "Debt")
+            .OrderByDescending(t => t.Amount)
+            .FirstOrDefault();
+
+        LowestDebt = TransactionService.Transactions
+            .Where(t => t.Type == "Debt")
+            .OrderBy(t => t.Amount)
+            .FirstOrDefault();
+
+        PendingDebt = TransactionService.TotalDebt - TransactionService.ClearedDebt;
+
+        Series = new List<ChartSeries>
+        {
+            new ChartSeries { Name = "Inflows", Data = TransactionService.Transactions
+                .Where(t => t.Type == "Income").GroupBy(t => t.Date.Month)
+                .OrderBy(g => g.Key)
+                .Select(g => g.Sum(t => (double)t.Amount))
+                .ToArray() },
+            new ChartSeries { Name = "Outflows", Data = TransactionService.Transactions
+                .Where(t => t.Type == "Expense").GroupBy(t => t.Date.Month)
+                .OrderBy(g => g.Key)
+                .Select(g => g.Sum(t => (double)t.Amount))
+                .ToArray() },
+        };
+    }
 }

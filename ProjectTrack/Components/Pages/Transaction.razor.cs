@@ -1,5 +1,4 @@
 ﻿using ProjectTrack.Models;
-using ProjectTrack.Service;
 using MudBlazor;
 using Microsoft.AspNetCore.Components;
 
@@ -43,7 +42,7 @@ namespace ProjectTrack.Components.Pages
             TransactionService.RemoveTransaction(transaction);
             Snackbar.Add("Transaction deleted successfully!", Severity.Info);
         }
-       
+
 
 
         protected void SaveTransaction()
@@ -81,7 +80,7 @@ namespace ProjectTrack.Components.Pages
 
             ToggleAddTransactionForm();
         }
-       
+
         protected void DeductIncome(decimal expenseAmount)
         {
             var remainingExpense = expenseAmount;
@@ -103,7 +102,7 @@ namespace ProjectTrack.Components.Pages
             }
         }
 
-       
+
 
     }
 }

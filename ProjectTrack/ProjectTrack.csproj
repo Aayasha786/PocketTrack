@@ -58,6 +58,16 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Include="wwwroot\css\app.css" />
+      <None Include="wwwroot\css\bootstrap\bootstrap.min.css" />
+      <None Include="wwwroot\css\bootstrap\bootstrap.min.css.map" />
+      <None Include="wwwroot\css\customTheme.css" />
+      <None Include="wwwroot\favicon.png" />
+      <None Include="wwwroot\images\rb_29096.png" />
+      <None Include="wwwroot\index.html" />
+    </ItemGroup>
+
+    <ItemGroup>
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" Version="$(MauiVersion)" />

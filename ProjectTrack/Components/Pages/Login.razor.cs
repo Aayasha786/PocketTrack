@@ -4,14 +4,14 @@ namespace ProjectTrack.Components.Pages
 {
     public partial class Login
     {
-        private string? ErrorMessage;
-
+        private string? ErrorMessage = string.Empty;
         public User Users { get; set; } = new();
         public List<string> Currencies { get; set; } = new()
         {
-            "NPR", "INR", "EUR", "AUD", "CAD"
+             "NPR", "INR", "EUR", "AUD", "CAD"
         };
 
+        #region  OnHandleLogin
         private async Task HandleLogin()
         {
             if (string.IsNullOrEmpty(Users.PreferredCurrency))
@@ -34,5 +34,6 @@ namespace ProjectTrack.Components.Pages
                 Nav.NavigateTo("/dashboard", true); // Nav (NavigationManager) is globally available
             }
         }
+        #endregion
     }
 }

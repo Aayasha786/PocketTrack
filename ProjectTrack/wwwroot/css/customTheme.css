@@ -1,0 +1,211 @@
+:root {
+    --mud-palette-primary: #4caf50; /* Green */
+    --mud-palette-secondary: #f44336; /* Red */
+    --mud-palette-appbar-background: #4caf50;
+    --mud-palette-background: #f4f4f4;
+    --mud-palette-drawer-background: #37474f;
+    --mud-palette-drawer-text: #ffffff;
+    --mud-palette-text-primary: #212121; /* Black text */
+    --mud-palette-text-secondary: #757575; /* Grey text */
+    --mud-palette-surface: #ffffff; /* Cards and surface backgrounds */
+    --mud-palette-action-default: #e0e0e0; /* Button backgrounds */
+}
+
+.sidebar {
+    background-color: #4caf50; /* Change this to your desired color */
+    color: white; /* Adjust text color for readability */
+    height: 100vh; /* Full height of the viewport */
+    padding: 20px; /* Optional: Add some padding */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for effect */
+}
+
+
+.dashboard-main-content {
+    background-color: #f0fdf4; /* Light greenish background */
+    padding: 16px; /* Add internal padding */
+    margin: 0; /* Remove extra margin */
+    border-radius: 12px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Ensure full width */
+}
+.content-container {
+    padding: 0; 
+    margin: 0 auto; 
+    max-width: 1200px; 
+}
+
+/* customTheme.css */
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Card Styles */
+.stat-card {
+    
+    padding: 16px;
+    color: white;
+    font-size: 1.2rem;
+    text-align: center;
+}
+
+/* Override the MudPaper Backgrounds */
+.inflows-card {
+    background-color: #4caf50 !important; /* Green */
+}
+
+.outflows-card {
+    background-color: #f44336 !important; /* Red */
+}
+
+.debt-card {
+    background-color: #2196f3 !important; /* Blue */
+}
+
+.cleared-debt-card {
+    background-color: #00bcd4 !important; /* Cyan */
+}
+
+/* Bar Chart Styling */
+.mud-chart {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Styles */
+.mud-table {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.mud-th {
+    font-weight: bold;
+    color: #4a4a4a;
+}
+
+.mud-td {
+    color: #606060;
+}
+/* Container styling */
+.container {
+    background-color: #f7f9fc; /* Light background */
+    padding: 20px;
+    border-radius: 8px; /* Rounded edges for a modern look */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Headings styling */
+h3.text-primary {
+    color: #3f51b5; /* Blue shade for primary heading */
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Filter, Search, and Sort section */
+.form-label {
+    font-weight: bold;
+    color: #333; /* Darker text for labels */
+}
+
+.form-control {
+    border: 1px solid #ced4da; /* Subtle border */
+    border-radius: 4px; /* Rounded input fields */
+    padding: 10px;
+    font-size: 14px;
+    color: #495057;
+}
+
+button.btn {
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Add/Edit Transaction Form */
+.card {
+    border: 1px solid #e0e0e0; /* Subtle border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add depth */
+}
+
+.card-title {
+    font-weight: bold;
+    color: #3f51b5; /* Primary color */
+    margin-bottom: 20px;
+}
+
+.card-body form label {
+    font-weight: bold;
+    color: #495057;
+}
+
+/* Buttons */
+button.btn-success {
+    background-color: #4caf50; /* Green success button */
+    border-color: #4caf50;
+    color: white;
+}
+
+button.btn-secondary {
+    background-color: #9e9e9e; /* Grey cancel button */
+    border-color: #9e9e9e;
+    color: white;
+}
+
+/* Transaction List */
+.table {
+    margin-top: 20px;
+    border: 1px solid #e0e0e0; /* Subtle border for the table */
+    background-color: white;
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add depth */
+}
+
+    .table th {
+        background-color: #3f51b5; /* Primary color for table header */
+        color: white;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    .table td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1; /* Light grey hover effect */
+}
+
+/* Actions buttons */
+button.btn-warning {
+    background-color: #ff9800; /* Orange for edit button */
+    border-color: #ff9800;
+    color: white;
+    margin-right: 5px;
+}
+
+button.btn-danger {
+    background-color: #f44336; /* Red for delete button */
+    border-color: #f44336;
+    color: white;
+}
+
+/* Pagination (if added) */
+.pagination {
+    margin-top: 20px;
+    justify-content: center;
+}
+
+    .pagination .page-item.active .page-link {
+        background-color: #3f51b5; /* Primary color for active page */
+        border-color: #3f51b5;
+        color: white;
+    }

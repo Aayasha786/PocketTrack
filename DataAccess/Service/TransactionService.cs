@@ -102,4 +102,32 @@ public class TransactionService
     {
         return Transactions.OrderByDescending(t => t.Amount).Take(count).ToList();
     }
+    public void ClearDebt(decimal amountToClear)
+    {
+        var remainingAmount = amountToClear;
+
+        foreach (var debt in Transactions.Where(t => t.Type == "Debt" && t.Amount > 0).OrderBy(t => t.Date))
+        {
+            if (remainingAmount <= 0)
+                break;
+
+            if (remainingAmount >= debt.Amount)
+            {
+                remainingAmount -= debt.Amount;
+                debt.Amount = 0;
+                Transactions.Add(new TransactionModel
+                {
+                    Description = $"Cleared Debt: {debt.Description}",
+                    Amount = debt.Amount,
+                    Date = DateTime.Now,
+                    Type = "Debt Payment"
+                });
+            }
+            else
+            {
+                debt.Amount -= remainingAmount;
+                remainingAmount = 0;
+            }
+        }
+    }
 }

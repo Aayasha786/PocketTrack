@@ -28,7 +28,7 @@
                 <option value="" disabled>Select Currency</option>
                 @foreach (var currency in Currencies)
                 {
-                    <option value="@currency">@currency</option>
+                        <option value="@currency">@currency</option>
                 }
             </select>
             <label for="PreferredCurrency">Preferred Currency</label>
@@ -37,7 +37,7 @@
         <!-- Error Message -->
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
-            <div class="alert alert-danger">@ErrorMessage</div>
+                <div class="alert alert-danger">@ErrorMessage</div>
         }
 
         <!-- Login Button -->

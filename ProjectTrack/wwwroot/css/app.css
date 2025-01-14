@@ -90,29 +90,5 @@ h1:focus {
     }
 
 
-    .custom-sidebar {
-        height: 100vh; /* Make the sidebar fill the full height */
-        width: 250px; /* Fixed width for the sidebar */
-    }
 
-    .content-container {
-        margin: 0; /* Remove any additional margin */
-        padding: 16px; /* Add consistent padding for the content */
-    }
-
-
-    .content {
-        flex: 1; /* Take the remaining width for the content */
-        padding: 1rem; /* Optional: Add padding for inner spacing */
-    }
-
-    .container {
-        margin-left: 250px; /* Same as the width of the sidebar */
-        padding: 16px; /* Optional padding */
-    }
-
-    body {
-        margin: 0;
-        padding: 0;
-    }
 }

@@ -89,6 +89,18 @@ h1:focus {
         height: 100vh; /* Full viewport height */
     }
 
+    .mud-chart-series-0 {
+        stroke: green !important; /* Incomes */
+        fill: green !important;
+    }
 
+    .mud-chart-series-1 {
+        stroke: red !important; /* Expenses */
+        fill: red !important;
+    }
 
+    .mud-chart-series-2 {
+        stroke: blue !important; /* Debts */
+        fill: blue !important;
+    }
 }

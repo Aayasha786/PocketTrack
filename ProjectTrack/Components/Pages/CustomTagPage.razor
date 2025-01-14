@@ -1,0 +1,80 @@
+﻿@page "/customtagpage"
+@inject TagService TagService
+@inject ISnackbar Snackbar
+
+<MudLayout>
+    <MudMainContent>
+        <div class="container mt-4">
+            <h3 class="text-primary">Manage Tags</h3>
+
+            <!-- Add New Tag -->
+            <div class="mb-4">
+                <MudTextField @bind-Value="newTag" Placeholder="Enter new tag" />
+                <button class="btn btn-primary ms-2" @onclick="AddTag">Add Tag</button>
+            </div>
+
+            <!-- Tag List -->
+            <div class="card">
+                <div class="card-body">
+                    <h5>Tag List</h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tag Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var tag in Tags)
+                            {
+                                <tr>
+                                    <td>@tag.Name</td>
+                                    <td>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteTag(tag)">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private string newTag = "";
+    private List<TagModel> Tags { get; set; } = new List<TagModel>();
+
+    protected override void OnInitialized()
+    {
+        // Load Tags on Page Initialization
+        Tags = TagService.GetAllTags();
+    }
+
+    private void AddTag()
+    {
+        if (!string.IsNullOrWhiteSpace(newTag) && !Tags.Any(t => t.Name == newTag))
+        {
+            Tags.Add(new TagModel { Name = newTag });
+            TagService.SaveTags(Tags); // Persist to file or database
+            newTag = ""; // Clear the input
+            Snackbar.Add("Tag added successfully!", Severity.Success); // Show success message
+        }
+        else if (!string.IsNullOrWhiteSpace(newTag) && Tags.Any(t => t.Name == newTag))
+        {
+            Snackbar.Add("Tag already exists!", Severity.Warning); // Show warning if the tag already exists
+        }
+        else
+        {
+            Snackbar.Add("Tag name cannot be empty!", Severity.Error); // Show error if the input is empty
+        }
+    }
+
+    private void DeleteTag(TagModel tag)
+    {
+        Tags.Remove(tag);
+        TagService.SaveTags(Tags); // Persist changes
+        Snackbar.Add("Tag deleted successfully!", Severity.Info); // Show delete success message
+    }
+}

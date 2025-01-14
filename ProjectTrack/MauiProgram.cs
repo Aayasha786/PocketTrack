@@ -31,6 +31,7 @@ namespace ProjectTrack
             builder.Services.AddSingleton<TransactionService>();
            
             builder.Services.AddSingleton<AuthService>();
+            builder.Services.AddSingleton<TagService>();
 
 #endif
 

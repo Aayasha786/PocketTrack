@@ -45,11 +45,42 @@ body {
 
 /* Card Styles */
 .stat-card {
-    
-    padding: 16px;
-    color: white;
-    font-size: 1.2rem;
+    padding: 30px; /* Increase padding for larger boxes */
     text-align: center;
+    font-size: 1.2rem; /* Increase font size */
+    width: 170px; /* Adjust width */
+    height: 150px; /* Adjust height */
+    margin: 10px auto; /* Add some spacing between cards */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px; /* Optional: Add rounded corners */
+}
+
+.inflows-card {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.outflows-card {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.debt-card {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.cleared-debt-card {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.pending-debt-card {
+    background-color: #DF9755;
+    color: #343a40;
 }
 
 /* Override the MudPaper Backgrounds */

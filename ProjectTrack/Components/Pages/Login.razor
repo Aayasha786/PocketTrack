@@ -1,48 +1,84 @@
 ﻿@page "/login"
 @using DataModel.Model
 
-
-<div class="form-login">
-    <EditForm Model="@Users" OnValidSubmit="HandleLogin">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <img class="mb-4" src="/appicon.png" alt="" height="72">
-        <h1 class="h3 mb-3 fw-normal">Please Login</h1>
-
-        <!-- Username Input -->
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" @bind="Users.Username" placeholder="Username" />
-            <label for="floatingInput">Username</label>
+<div class="login-container">
+    <div class="login-card">
+        <div class="text-center mb-4">
+         
+            <h3 class="login-header">Welcome Back!</h3>
+            <p class="login-subtext">Please login to continue</p>
         </div>
 
-        <!-- Password Input -->
-        <div class="form-floating mb-3">
-            <input type="password" class="form-control" @bind="Users.Password" placeholder="Password" />
-            <label for="floatingPassword">Password</label>
-        </div>
+        <EditForm Model="@Users" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-        <!-- Preferred Currency Dropdown -->
-        <div class="form-floating mb-3">
-            <select class="form-select" @bind="Users.PreferredCurrency">
-                <option value="" disabled>Select Currency</option>
-                @foreach (var currency in Currencies)
-                {
+            <!-- Username Input -->
+            <div class="form-group mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input id="username" class="form-control" type="text" placeholder="Enter your username" @bind="Users.Username" required />
+            </div>
+
+            <!-- Password Input -->
+            <div class="form-group mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input id="password" class="form-control" type="password" placeholder="Enter your password" @bind="Users.Password" required />
+            </div>
+
+            <!-- Preferred Currency Dropdown -->
+            <div class="form-group mb-3">
+                <label for="currency" class="form-label">Preferred Currency</label>
+                <select id="currency" class="form-select" @bind="Users.PreferredCurrency" required>
+                    <option value="" disabled>Select Currency</option>
+                    @foreach (var currency in Currencies)
+                    {
                         <option value="@currency">@currency</option>
-                }
-            </select>
-            <label for="PreferredCurrency">Preferred Currency</label>
-        </div>
+                    }
+                </select>
+            </div>
 
-        <!-- Error Message -->
-        @if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-                <div class="alert alert-danger">@ErrorMessage</div>
-        }
+            <!-- Error Message -->
+            @if (!string.IsNullOrEmpty(ErrorMessage))
+            {
+                <div class="alert alert-danger" role="alert">@ErrorMessage</div>
+            }
 
-        <!-- Login Button -->
-        <button class="btn btn-lg btn-primary" type="submit">
-            Login 
-        </button>
-    </EditForm>
+            <!-- Login Button -->
+            <button type="submit" class="btn btn-primary btn-block">Login</button>
+        </EditForm>
+    </div>
 </div>
+
+<style>
+    body {
+        background-color:lightgray;
+        font-family: Arial, sans-serif;
+    }
+
+    .login-container {
+        max-width: 450px;
+        margin: 100px auto;
+        background-color: #B2C9AD;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-card {
+        text-align: center;
+    }
+    .login-header {
+        color:white;
+        margin-bottom: 0.5rem;
+    }
+
+    .login-subtext {
+        color:olive;
+        margin-bottom: 1rem;
+    }
+
+    .btn-block {
+        display: block;
+        width: 100%;
+    }
+</style>

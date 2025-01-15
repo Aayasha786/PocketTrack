@@ -3,6 +3,7 @@ using DataAccess.Service;
 using DataAccess.Service.Interface;
 using MudBlazor.Services;
 using ProjectTrack.Service;
+using ProjectTrack.Services;
 
 namespace ProjectTrack
 {
@@ -31,7 +32,14 @@ namespace ProjectTrack
             builder.Services.AddSingleton<TransactionService>();
            
             builder.Services.AddSingleton<AuthService>();
+
+            builder.Services.AddSingleton<UserService>();
+
             builder.Services.AddSingleton<TagService>();
+            builder.Services.AddSingleton<FileService>();
+            
+
+
 
 #endif
 

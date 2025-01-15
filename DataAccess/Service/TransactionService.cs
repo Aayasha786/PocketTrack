@@ -1,10 +1,56 @@
-﻿using ProjectTrack.Models;
+﻿using System.Text.Json;
+using ProjectTrack.Models;
 
 public class TransactionService
 {
+    private static readonly string FilePath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+        "transactions.json"
+    );
+
     public List<TransactionModel> Transactions { get; private set; } = new();
 
-    // Summary Properties
+    // Constructor
+    public TransactionService()
+    {
+        LoadTransactions();
+    }
+
+    // Load Transactions from File
+    private void LoadTransactions()
+    {
+        if (!File.Exists(FilePath))
+        {
+            Transactions = new List<TransactionModel>();
+            return;
+        }
+
+        var json = File.ReadAllText(FilePath);
+        Transactions = JsonSerializer.Deserialize<List<TransactionModel>>(json) ?? new List<TransactionModel>();
+    }
+
+    // Save Transactions to File
+    private void SaveTransactions()
+    {
+        var json = JsonSerializer.Serialize(Transactions);
+        File.WriteAllText(FilePath, json);
+    }
+
+    // Add Transaction
+    public void AddTransaction(TransactionModel transaction)
+    {
+        Transactions.Add(transaction);
+        SaveTransactions();
+    }
+
+    // Remove Transaction
+    public void RemoveTransaction(TransactionModel transaction)
+    {
+        Transactions.Remove(transaction);
+        SaveTransactions();
+    }
+
+    // Properties for Financial Summaries
     public decimal TotalInflows => Transactions
         .Where(t => t.Type == "Income")
         .Sum(t => t.Amount);
@@ -23,58 +69,7 @@ public class TransactionService
 
     public decimal PendingDebt => TotalDebt - ClearedDebt;
 
-    public int TotalTransactionsCount => Transactions.Count;
-
-    public decimal TotalTransactionAmount => TotalInflows + TotalDebt - TotalOutflows;
-
-    // Highest/Lowest Transactions
-    public TransactionModel? HighestInflow => Transactions
-        .Where(t => t.Type == "Income")
-        .OrderByDescending(t => t.Amount)
-        .FirstOrDefault();
-
-    public TransactionModel? LowestInflow => Transactions
-        .Where(t => t.Type == "Income")
-        .OrderBy(t => t.Amount)
-        .FirstOrDefault();
-
-    public TransactionModel? HighestOutflow => Transactions
-        .Where(t => t.Type == "Expense")
-        .OrderByDescending(t => t.Amount)
-        .FirstOrDefault();
-
-    public TransactionModel? LowestOutflow => Transactions
-        .Where(t => t.Type == "Expense")
-        .OrderBy(t => t.Amount)
-        .FirstOrDefault();
-
-    public TransactionModel? HighestDebt => Transactions
-        .Where(t => t.Type == "Debt")
-        .OrderByDescending(t => t.Amount)
-        .FirstOrDefault();
-
-    public TransactionModel? LowestDebt => Transactions
-        .Where(t => t.Type == "Debt")
-        .OrderBy(t => t.Amount)
-        .FirstOrDefault();
-
-    // Methods
-    public void AddTransaction(TransactionModel transaction)
-    {
-        Transactions.Add(transaction);
-    }
-
-    public void RemoveTransaction(TransactionModel transaction)
-    {
-        Transactions.Remove(transaction);
-    }
-
-    public decimal GetTotalBalance()
-    {
-        return TotalInflows - TotalOutflows;
-    }
-
-    // Filtering Method
+    // Filtering Transactions
     public List<TransactionModel> FilterTransactions(string type, List<string> tags, DateTime? startDate, DateTime? endDate)
     {
         return Transactions
@@ -85,23 +80,30 @@ public class TransactionService
             .ToList();
     }
 
-    // Sorting Method
+    // Sorting Transactions by Date
     public List<TransactionModel> SortTransactionsByDate(bool ascending = true)
     {
         return ascending ? Transactions.OrderBy(t => t.Date).ToList() : Transactions.OrderByDescending(t => t.Date).ToList();
     }
 
-    // Searching Method
+    // Searching Transactions
     public List<TransactionModel> SearchTransactions(string searchQuery)
     {
-        return Transactions.Where(t => t.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+        return Transactions
+            .Where(t => t.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+            .ToList();
     }
 
-    // Top Transactions Method
+    // Getting Top Transactions by Amount
     public List<TransactionModel> GetTopTransactions(int count = 5)
     {
-        return Transactions.OrderByDescending(t => t.Amount).Take(count).ToList();
+        return Transactions
+            .OrderByDescending(t => t.Amount)
+            .Take(count)
+            .ToList();
     }
+
+    // Clearing Debt Logic
     public void ClearDebt(decimal amountToClear)
     {
         var remainingAmount = amountToClear;
@@ -115,6 +117,7 @@ public class TransactionService
             {
                 remainingAmount -= debt.Amount;
                 debt.Amount = 0;
+
                 Transactions.Add(new TransactionModel
                 {
                     Description = $"Cleared Debt: {debt.Description}",
@@ -129,5 +132,7 @@ public class TransactionService
                 remainingAmount = 0;
             }
         }
+
+        SaveTransactions(); // Save updated transaction list
     }
 }

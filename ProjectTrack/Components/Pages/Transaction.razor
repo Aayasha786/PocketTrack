@@ -1,6 +1,5 @@
 ﻿@page "/transactions"
 @inherits TransactionsBase
-
 <MudLayout>
     <MudMainContent>
         <div class="container mt-4">
@@ -49,53 +48,82 @@
             <!-- Add/Edit Transaction Form -->
             @if (showAddTransactionForm)
             {
-                    <div class="card mt-4">
-                        <div class="card-body">
-                            <h5 class="card-title">@((editingTransaction != null) ? "Edit Transaction" : "Add New Transaction")</h5>
-                            <form>
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h5 class="card-title">@((editingTransaction != null) ? "Edit Transaction" : "Add New Transaction")</h5>
+                        <form>
+                            <div class="mb-3">
+                                <label>Description</label>
+                                <input class="form-control" @bind="currentTransaction.Description" />
+                            </div>
+                            <div class="mb-3">
+                                <label>Amount</label>
+                                <input type="number" class="form-control" @bind="currentTransaction.Amount" />
+                            </div>
+                            <div class="mb-3">
+                                <label>Date</label>
+                                <input type="date" class="form-control" @bind="currentTransaction.Date" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Type</label>
+                                <select id="type" class="form-control" @bind="currentTransaction.Type">
+                                    <option value="Income">Income</option>
+                                    <option value="Expense">Expense</option>
+                                    <option value="Debt">Debt</option>
+                                    <option value="Debt Payment">Debt Payment</option>
+                                </select>
+                            </div>
+
+                            <!-- Conditional Fields for Debt Transactions -->
+                            @if (currentTransaction.Type == "Debt" || currentTransaction.Type == "Debt Payment")
+                            {
                                 <div class="mb-3">
-                                    <label>Description</label>
-                                    <input class="form-control" @bind="currentTransaction.Description" />
+                                    <label for="source" class="form-label">Source of Debt</label>
+                                    <input id="source" class="form-control" @bind="currentTransaction.DebtSource" placeholder="E.g., Bank Loan, Friend" />
                                 </div>
                                 <div class="mb-3">
-                                    <label>Amount</label>
-                                    <input type="number" class="form-control" @bind="currentTransaction.Amount" />
+                                    <label for="dueDate" class="form-label">Due Date</label>
+                                    <input id="dueDate" type="date" class="form-control" @bind="currentTransaction.DueDate" />
                                 </div>
+                            }
+                            @if (currentTransaction.Type == "Debt Payment")
+                            {
                                 <div class="mb-3">
-                                    <label>Date</label>
-                                    <input type="date" class="form-control" @bind="currentTransaction.Date" />
-                                </div>
-                                <div class="mb-3">
-                                    <label for="type" class="form-label">Type</label>
-                                    <select id="type" class="form-control" @bind="currentTransaction.Type">
-                                        <option value="Income">Income</option>
-                                        <option value="Expense">Expense</option>
-                                        <option value="Debt">Debt</option>
-                                        <option value="Debt Payment">Debt Payment</option>
+                                    <label for="debtId" class="form-label">Select Debt</label>
+                                    <select id="debtId" class="form-control" @bind="currentTransaction.DebtId">
+                                        <option value="">-- Select Debt --</option>
+                                        @foreach (var debt in Transactions.Where(t => t.Type == "Debt"))
+                                        {
+                                            <option value="@debt.DebtId">@debt.Description (Pending: @debt.Amount.ToString("C"))</option>
+                                        }
                                     </select>
                                 </div>
-                                 <div class="mb-3">
-                                     <label for="type" class="form-label">Tag</label>
-                                     <select class="form-control" @bind="currentTransaction.SelectedTag">
-                                         <option value="" disabled>Select a tag</option>
-                                              @foreach (var tag in AvailableTags)
-                                               {
-                                               <option value="@tag.Name">@tag.Name</option>
-                                               }
-                                     </select>
-                                 </div>
+                            }
 
 
-                                <div class="mb-3">
-                                    <label>Note</label>
-                                    <textarea class="form-control" placeholder="Optional note..." @bind="currentTransaction.Note"></textarea>
-                                </div>
 
-                                <button type="button" class="btn btn-success me-2" @onclick="SaveTransaction">Save</button>
-                                <button type="button" class="btn btn-secondary" @onclick="CancelTransactionForm">Cancel</button>
-                            </form>
-                        </div>
+                            <!-- Tag Selection -->
+                            <div class="mb-3">
+                                <label for="type" class="form-label">Tag</label>
+                                <select class="form-control" @bind="currentTransaction.SelectedTag">
+                                    <option value="" disabled>Select a tag</option>
+                                    @foreach (var tag in AvailableTags)
+                                    {
+                                        <option value="@tag.Name">@tag.Name</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Note</label>
+                                <textarea class="form-control" placeholder="Optional note..." @bind="currentTransaction.Note"></textarea>
+                            </div>
+
+                            <button type="button" class="btn btn-success me-2" @onclick="SaveTransaction">Save</button>
+                            <button type="button" class="btn btn-secondary" @onclick="CancelTransactionForm">Cancel</button>
+                        </form>
                     </div>
+                </div>
             }
 
             <!-- Transaction List -->
@@ -118,18 +146,18 @@
                         <tbody>
                             @foreach (var transaction in FilteredTransactions)
                             {
-                                    <tr>
-                                        <td>@transaction.Description</td>
-                                        <td>@transaction.Amount.ToString("C")</td>
-                                        <td>@transaction.Date.ToString("yyyy-MM-dd")</td>
-                                        <td>@transaction.Type</td>
-                                        <td>@(transaction.Tags.Count > 0 ? transaction.Tags[0] : "None")</td>
-                                        <td>@transaction.Note</td>
-                                        <td>
-                                            <button class="btn btn-warning btn-sm" @onclick="() => EditTransaction(transaction)">Edit</button>
-                                            <button class="btn btn-danger btn-sm" @onclick="() => DeleteTransaction(transaction)">Delete</button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td>@transaction.Description</td>
+                                    <td>@transaction.Amount.ToString("C")</td>
+                                    <td>@transaction.Date.ToString("yyyy-MM-dd")</td>
+                                    <td>@transaction.Type</td>
+                                    <td>@(transaction.Tags.Count > 0 ? transaction.Tags[0] : "None")</td>
+                                    <td>@transaction.Note</td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" @onclick="() => EditTransaction(transaction)">Edit</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteTransaction(transaction)">Delete</button>
+                                    </td>
+                                </tr>
                             }
                         </tbody>
                     </table>
@@ -138,145 +166,3 @@
         </div>
     </MudMainContent>
 </MudLayout>
-@code {
-
-    private string FilterType { get; set; } = "";
-    private string SearchQuery { get; set; } = "";
-    private string SortOrder { get; set; } = "Ascending";
-    private DateTime? StartDate { get; set; }
-    private DateTime? EndDate { get; set; }
-
-    protected TransactionModel? editingTransaction { get; set; }
-    protected bool showAddTransactionForm { get; set; } = false;
-
-    private List<TagModel> AvailableTags { get; set; } = new();
-    protected TransactionModel currentTransaction { get; set; } = new() { Date = DateTime.Now, Type = "Income", Tags = new List<string>() };
-    protected List<TransactionModel> Transactions => TransactionService.Transactions;
-
-    private List<TransactionModel> FilteredTransactions => ApplySorting(ApplySearch(ApplyDateFilter(ApplyFilter(Transactions))));
-
-    protected override void OnInitialized()
-    {
-        // Load tags when the component is initialized
-        AvailableTags = TagService.GetAllTags();
-    }
-
-    protected void ApplyFilters()
-    {
-        StateHasChanged();
-    }
-
-    private List<TransactionModel> ApplyFilter(List<TransactionModel> transactions)
-    {
-        return string.IsNullOrEmpty(FilterType) ? transactions : transactions.Where(t => t.Type == FilterType).ToList();
-    }
-
-    private List<TransactionModel> ApplySearch(List<TransactionModel> transactions)
-    {
-        return string.IsNullOrEmpty(SearchQuery)
-            ? transactions
-            : transactions.Where(t => t.Description.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
-    }
-
-    private List<TransactionModel> ApplyDateFilter(List<TransactionModel> transactions)
-    {
-        return transactions
-            .Where(t => !StartDate.HasValue || t.Date >= StartDate.Value)
-            .Where(t => !EndDate.HasValue || t.Date <= EndDate.Value)
-            .ToList();
-    }
-
-    private List<TransactionModel> ApplySorting(List<TransactionModel> transactions)
-    {
-        return SortOrder == "Ascending"
-            ? transactions.OrderBy(t => t.Date).ToList()
-            : transactions.OrderByDescending(t => t.Date).ToList();
-    }
-
-    protected void SaveTransaction()
-    {
-        // Validation for mandatory fields
-        if (string.IsNullOrWhiteSpace(currentTransaction.Description))
-        {
-            Snackbar.Add("Error: Description is required!", Severity.Error);
-            return;
-        }
-
-        if (currentTransaction.Amount <= 0)
-        {
-            Snackbar.Add("Error: Amount must be greater than zero!", Severity.Error);
-            return;
-        }
-
-        if (currentTransaction.Date == default)
-        {
-            Snackbar.Add("Error: Date is required!", Severity.Error);
-            return;
-        }
-        if (!string.IsNullOrWhiteSpace(currentTransaction.SelectedTag))
-        {
-            currentTransaction.Tags = new List<string> { currentTransaction.SelectedTag };
-        }
-        // Validation passed, proceed to save
-        if (editingTransaction != null)
-        {
-            editingTransaction.Description = currentTransaction.Description;
-            editingTransaction.Amount = currentTransaction.Amount;
-            editingTransaction.Date = currentTransaction.Date;
-            editingTransaction.Type = currentTransaction.Type;
-            editingTransaction.Tags = currentTransaction.Tags;
-
-
-            Snackbar.Add("Transaction updated successfully!", Severity.Success);
-        }
-        else
-        {
-            TransactionService.AddTransaction(currentTransaction);
-            Snackbar.Add("New transaction added successfully!", Severity.Success);
-        }
-
-        CancelTransactionForm();
-    }
-
-    protected void ToggleAddTransactionForm()
-    {
-        showAddTransactionForm = !showAddTransactionForm;
-        if (!showAddTransactionForm)
-        {
-            CancelTransactionForm();
-        }
-    }
-
-    protected void EditTransaction(TransactionModel transaction)
-    {
-        editingTransaction = transaction;
-        currentTransaction = new TransactionModel
-            {
-                Description = transaction.Description,
-                Amount = transaction.Amount,
-                Date = transaction.Date,
-                Type = transaction.Type,
-                Tags = new List<string>(transaction.Tags),
-                Note = transaction.Note
-            };
-        showAddTransactionForm = true;
-    }
-
-    protected void CancelTransactionForm()
-    {
-        currentTransaction = new TransactionModel
-            {
-                Date = DateTime.Now,
-                Type = "Income",
-                Tags = new List<string>()
-            };
-        editingTransaction = null;
-        showAddTransactionForm = false;
-    }
-
-    protected void DeleteTransaction(TransactionModel transaction)
-    {
-        TransactionService.RemoveTransaction(transaction);
-        Snackbar.Add("Transaction deleted successfully!", Severity.Info);
-    }
-}

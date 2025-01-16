@@ -82,28 +82,27 @@
                     </div>
                 </div>
 
-                <!-- Pending Debt Details Table -->
-                <div class="row mt-5">
-                    <div class="col-12">
-                        <MudPaper Class="pa-4" Elevation="4">
-                            <h5>Pending Debt Details</h5>
-                            <MudTable Items="@PendingDebtTransactions" T="TransactionModel">
-                                <HeaderContent>
-                                    <MudTh>Description</MudTh>
-                                    <MudTh>Amount</MudTh>
-                                    <MudTh>Date</MudTh>
-                                    <MudTh>Note</MudTh>
-                                </HeaderContent>
-                                <RowTemplate Context="transaction">
-                                    <MudTd DataLabel="Description">@transaction.Description</MudTd>
-                                    <MudTd DataLabel="Amount">@transaction.Amount.ToString("C")</MudTd>
-                                    <MudTd DataLabel="Date">@transaction.Date.ToString("yyyy-MM-dd")</MudTd>
-                                    <MudTd DataLabel="Note">@transaction.Note</MudTd>
-                                </RowTemplate>
-                            </MudTable>
-                        </MudPaper>
-                    </div>
-                </div>
+                <MudTable Items="@PendingDebtDetails" T="TransactionModel">
+                    <HeaderContent>
+                        <MudTh>Description</MudTh>
+                        <MudTh>Pending Amount</MudTh>
+                        <MudTh>Date</MudTh>
+                        <MudTh>Source</MudTh>
+                        <MudTh>Due Date</MudTh>
+                        <MudTh>Note</MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="transaction">
+                        <MudTd DataLabel="Description">@transaction.Description</MudTd>
+                        <MudTd DataLabel="Pending Amount">@transaction.Amount.ToString("C")</MudTd>
+                        <MudTd DataLabel="Date">@transaction.Date.ToString("yyyy-MM-dd")</MudTd>
+                        <MudTd DataLabel="Source">@transaction.DebtSource</MudTd>
+                        <MudTd DataLabel="Due Date">@transaction.DueDate?.ToString("yyyy-MM-dd")</MudTd>
+                        <MudTd DataLabel="Note">@transaction.Note</MudTd>
+                    </RowTemplate>
+                </MudTable>
+
+
+
 
                 <!-- Bar Chart: Top Transactions -->
                 <div class="row mt-5">
@@ -122,68 +121,3 @@
         </div>
     </MudMainContent>
 </MudLayout>
-
-@code {
-    private IEnumerable<TransactionModel> TopTransactions = Enumerable.Empty<TransactionModel>();
-    private IEnumerable<TransactionModel> PendingDebtTransactions = Enumerable.Empty<TransactionModel>();
-
-    private DateTime? StartDate;
-    private DateTime? EndDate;
-
-    public List<ChartSeries> DynamicChartSeries { get; set; } = new();
-    
-    public string[] DynamicXAxisLabels { get; set; } = Array.Empty<string>();
-    public string[] DynamicYAxisLabels { get; set; } = Array.Empty<string>();
-
-    protected override void OnInitialized()
-    {
-        LoadDashboardData();
-    }
-
-    private void LoadDashboardData()
-    {
-        var filteredTransactions = TransactionService.Transactions;
-
-        // Apply date range filter
-        if (StartDate.HasValue)
-            filteredTransactions = filteredTransactions.Where(t => t.Date >= StartDate.Value).ToList();
-
-        if (EndDate.HasValue)
-            filteredTransactions = filteredTransactions.Where(t => t.Date <= EndDate.Value).ToList();
-
-        // Top Transactions
-        TopTransactions = filteredTransactions.OrderByDescending(t => t.Amount).Take(5);
-
-        // Pending Debt Transactions
-        PendingDebtTransactions = filteredTransactions.Where(t => t.Type == "Debt" && t.Amount > 0);
-
-        // Update Chart Data
-        UpdateDynamicChart();
-    }
-    private void UpdateDynamicChart()
-    {
-        // Prepare data for the bar chart
-        DynamicYAxisLabels = TopTransactions
-            .Select(t => t.Description.Length > 15
-                ? t.Description.Substring(0, 15) + "..." // Truncate long descriptions
-                : t.Description)
-            .ToArray();
-
-        DynamicChartSeries = new List<ChartSeries>
-    {
-        new ChartSeries
-        {
-            Name = "Amount",
-            Data = TopTransactions.Select(t => (double)t.Amount).ToArray()
-        }
-    };
-    }
-
-
-   
-
-    private void ApplyDateFilter()
-    {
-        LoadDashboardData();
-    }
-}

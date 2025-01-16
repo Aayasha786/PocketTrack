@@ -4,7 +4,7 @@ namespace ProjectTrack.Models
 {
     public class TransactionModel
     {
-        //public Guid Id { get; set; } = Guid.NewGuid(); // Unique identifier for each transaction
+       // public Guid Id { get; set; } = Guid.NewGuid(); // Unique identifier for each transaction
         public string Description { get; set; }
         public decimal Amount { get; set; }
         public DateTime Date { get; set; }
@@ -14,5 +14,13 @@ namespace ProjectTrack.Models
         public string SelectedTag { get; set; } // New property
 
         public string Note { get; set; } // Optional note
+
+
+        public string? DebtSource { get; set; } // Source of the debt
+        public DateTime? DueDate { get; set; } // Optional due date for the debt
+
+        public string? DebtId { get; set; }
     }
+
+
 }

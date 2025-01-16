@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- Top Transactions -->
-                <div class="row">
+                <div class="row mb-5">
                     <div class="col-12">
                         <MudPaper Class="pa-4" Elevation="4">
                             <h5>Top Transactions</h5>
@@ -82,42 +82,53 @@
                     </div>
                 </div>
 
-                <MudTable Items="@PendingDebtDetails" T="TransactionModel">
-                    <HeaderContent>
-                        <MudTh>Description</MudTh>
-                        <MudTh>Pending Amount</MudTh>
-                        <MudTh>Date</MudTh>
-                        <MudTh>Source</MudTh>
-                        <MudTh>Due Date</MudTh>
-                        <MudTh>Note</MudTh>
-                    </HeaderContent>
-                    <RowTemplate Context="transaction">
-                        <MudTd DataLabel="Description">@transaction.Description</MudTd>
-                        <MudTd DataLabel="Pending Amount">@transaction.Amount.ToString("C")</MudTd>
-                        <MudTd DataLabel="Date">@transaction.Date.ToString("yyyy-MM-dd")</MudTd>
-                        <MudTd DataLabel="Source">@transaction.DebtSource</MudTd>
-                        <MudTd DataLabel="Due Date">@transaction.DueDate?.ToString("yyyy-MM-dd")</MudTd>
-                        <MudTd DataLabel="Note">@transaction.Note</MudTd>
-                    </RowTemplate>
-                </MudTable>
+                <div class="row mb-5">
+                    <!-- Added 'mb-4' for spacing -->
+                    <div class="col-12">
+                        <MudPaper Class="pa-4" Elevation="4">
+                            <h5>Pending Debt Details</h5>
+                            <MudTable Items="@PendingDebtDetails" T="TransactionModel">
+                                <HeaderContent>
+                                    <MudTh>Description</MudTh>
+                                    <MudTh>Pending Amount</MudTh>
+                                    <MudTh>Date</MudTh>
+                                    <MudTh>Source</MudTh>
+                                    <MudTh>Due Date</MudTh>
+                                    <MudTh>Note</MudTh>
+                                </HeaderContent>
+                                <RowTemplate Context="transaction">
+                                    <MudTd DataLabel="Description">@transaction.Description</MudTd>
+                                    <MudTd DataLabel="Pending Amount">@transaction.Amount.ToString("C")</MudTd>
+                                    <MudTd DataLabel="Date">@transaction.Date.ToString("yyyy-MM-dd")</MudTd>
+                                    <MudTd DataLabel="Source">@transaction.DebtSource</MudTd>
+                                    <MudTd DataLabel="Due Date">@transaction.DueDate?.ToString("yyyy-MM-dd")</MudTd>
+                                    <MudTd DataLabel="Note">@transaction.Note</MudTd>
+                                </RowTemplate>
+                            </MudTable>
+                        </MudPaper>
+                    </div>
+                </div>
 
 
 
 
                 <!-- Bar Chart: Top Transactions -->
                 <div class="row mt-5">
-                    <!-- Bar Chart: Top Transactions -->
-                    <div class="row mt-5">
-                        <div class="col-12">
-                            <MudPaper Class="pa-4" Elevation="4">
-                                <h5>Bar Chart: Top Transactions (Amount vs Description)</h5>
-                                <MudChart ChartType="ChartType.Bar" ChartSeries="@DynamicChartSeries" XAxisLabels="@DynamicXAxisLabels" YAxisLabels="@DynamicYAxisLabels" Width="100%" Height="350px" />
-                            </MudPaper>
-                        </div>
+                    <div class="col-12">
+                        <MudPaper Class="pa-4" Elevation="4">
+                            <h5>Bar Chart: Top Transactions (Amount vs Description)</h5>
+                            <MudChart ChartType="ChartType.Bar"
+                                      ChartSeries="@DynamicChartSeries"
+                                      YAxisLabels="@DynamicYAxisLabels"
+                                      Width="100%"
+                                      Height="350px" />
+                        </MudPaper>
                     </div>
+                </div>
 
-            </div>
         </div>
         </div>
     </MudMainContent>
+
+
 </MudLayout>

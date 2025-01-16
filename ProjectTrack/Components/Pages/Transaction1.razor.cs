@@ -67,7 +67,7 @@ namespace ProjectTrack.Components.Pages
                 ? transactions.OrderBy(t => t.Date).ToList()
                 : transactions.OrderByDescending(t => t.Date).ToList();
         }
-
+        #region
         protected void SaveTransaction()
         {
             // Validation for mandatory fields
@@ -89,19 +89,40 @@ namespace ProjectTrack.Components.Pages
                 return;
             }
 
-            // Validate Source for Debt and Debt Payment
-            if ((currentTransaction.Type == "Debt" || currentTransaction.Type == "Debt Payment") &&
-                string.IsNullOrWhiteSpace(currentTransaction.DebtSource))
+            // Validate Debt Payment
+            if (currentTransaction.Type == "Debt Payment")
             {
-                Snackbar.Add("Error: Source is required for Debt and Debt Payment transactions!", Severity.Error);
-                return;
+                // Check if there is any debt
+                if (TransactionService.TotalDebt <= 0)
+                {
+                    Snackbar.Add("Error: There is no existing debt to make a debt payment!", Severity.Error);
+                    return;
+                }
+
+                // Check if debt payment amount exceeds pending debt
+                if (currentTransaction.Amount > TransactionService.PendingDebt)
+                {
+                    Snackbar.Add("Error: Debt payment amount cannot exceed the pending debt!", Severity.Error);
+                    return;
+                }
+
+                // Check if debt payment amount exceeds inflows
+                if (currentTransaction.Amount > TransactionService.TotalInflows)
+                {
+                    Snackbar.Add("Error: Debt payment amount cannot exceed the total inflows!", Severity.Error);
+                    return;
+                }
             }
 
-            // Link DebtId for Debt Payment
-            if (currentTransaction.Type == "Debt Payment" && string.IsNullOrEmpty(currentTransaction.DebtId))
+            // Prevent saving if expense exceeds inflows
+            if (currentTransaction.Type == "Expense")
             {
-                Snackbar.Add("Error: Debt Payment must be linked to a specific Debt!", Severity.Error);
-                return;
+                var remainingInflows = TransactionService.TotalInflows - TransactionService.TotalOutflows;
+                if (currentTransaction.Amount > remainingInflows)
+                {
+                    Snackbar.Add("Error: Expense exceeds the available inflows!", Severity.Error);
+                    return;
+                }
             }
 
             // Handle Tags
@@ -113,6 +134,7 @@ namespace ProjectTrack.Components.Pages
             // Save or update the transaction
             if (editingTransaction != null)
             {
+                // Update the existing transaction
                 editingTransaction.Description = currentTransaction.Description;
                 editingTransaction.Amount = currentTransaction.Amount;
                 editingTransaction.Date = currentTransaction.Date;
@@ -126,19 +148,23 @@ namespace ProjectTrack.Components.Pages
             }
             else
             {
-                var result = TransactionService.AddTransaction(currentTransaction); // Only call AddTransaction here
+                TransactionService.AddTransaction(currentTransaction);
 
-                if (result.StartsWith("Error"))
+                // Warn if total outflows exceed total inflows
+                if (TransactionService.TotalOutflows > TransactionService.TotalInflows)
                 {
-                    Snackbar.Add(result, Severity.Error); // Show error message if validation fails
-                    return;
+                    Snackbar.Add("Warning: Total outflows exceed total inflows!", Severity.Warning);
                 }
 
                 Snackbar.Add("New transaction added successfully!", Severity.Success);
             }
 
+            // Reset the form after saving the transaction
             CancelTransactionForm();
         }
+
+        #endregion
+
 
 
         protected void ToggleAddTransactionForm()

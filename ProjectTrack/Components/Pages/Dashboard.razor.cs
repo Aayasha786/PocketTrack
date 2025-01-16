@@ -29,16 +29,16 @@ namespace ProjectTrack.Components.Pages
         {
             TransactionService.OnTransactionsChanged -= LoadDashboardData; // Unsubscribe when the component is disposed
         }
-
         private void UpdateDynamicChart()
         {
-            // Prepare data for the bar chart
+            // Y-axis: Descriptions
             DynamicYAxisLabels = TopTransactions
                 .Select(t => t.Description.Length > 15
-                    ? t.Description.Substring(0, 15) + "..." // Truncate long descriptions
+                    ? t.Description.Substring(0, 15) + "..." // Truncate if needed
                     : t.Description)
                 .ToArray();
 
+            // Chart Series: Amounts (mapped to X-axis implicitly)
             DynamicChartSeries = new List<ChartSeries>
     {
         new ChartSeries
@@ -48,6 +48,10 @@ namespace ProjectTrack.Components.Pages
         }
     };
         }
+
+
+
+
 
 
         private void LoadDashboardData()

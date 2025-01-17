@@ -11,6 +11,8 @@ namespace ProjectTrack.Components.Pages
         private DateTime? StartDate;
         private DateTime? EndDate;
 
+
+
         public List<ChartSeries> DynamicChartSeries { get; set; } = new();
 
         public string[] DynamicXAxisLabels { get; set; } = Array.Empty<string>();
@@ -29,31 +31,8 @@ namespace ProjectTrack.Components.Pages
         {
             TransactionService.OnTransactionsChanged -= LoadDashboardData; // Unsubscribe when the component is disposed
         }
-        private void UpdateDynamicChart()
-        {
-            // Y-axis: Descriptions
-            DynamicYAxisLabels = TopTransactions
-                .Select(t => t.Description.Length > 15
-                    ? t.Description.Substring(0, 15) + "..." // Truncate if needed
-                    : t.Description)
-                .ToArray();
 
-            // Chart Series: Amounts (mapped to X-axis implicitly)
-            DynamicChartSeries = new List<ChartSeries>
-    {
-        new ChartSeries
-        {
-            Name = "Amount",
-            Data = TopTransactions.Select(t => (double)t.Amount).ToArray()
-        }
-    };
-        }
-
-
-
-
-
-
+        #region
         private void LoadDashboardData()
         {
             var filteredTransactions = TransactionService.Transactions;
@@ -74,7 +53,30 @@ namespace ProjectTrack.Components.Pages
             // Update Chart Data
             UpdateDynamicChart();
         }
+        #endregion
 
+
+
+        private void UpdateDynamicChart()
+        {
+            // Prepare data for the bar chart
+            DynamicXAxisLabels = TopTransactions
+                .Select(t => t.Description.Length > 15
+                    ? t.Description.Substring(0, 15) + "..." // Truncate long descriptions
+                    : t.Description)
+                .ToArray();
+
+            DynamicYAxisLabels = new[] { "Amount" }; // Label for Y-axis
+
+            DynamicChartSeries = new List<ChartSeries>
+            {
+                new ChartSeries
+                {
+                    Name = "Amount",
+                    Data = TopTransactions.Select(t => (double)t.Amount).ToArray() // Amount values on Y-axis
+                }
+            };
+        }
 
 
 

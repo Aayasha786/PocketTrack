@@ -108,23 +108,24 @@
                         </MudPaper>
                     </div>
                 </div>
-
-
-
-
+               <div class="row mt-5">
                 <!-- Bar Chart: Top Transactions -->
-                <div class="row mt-5">
-                    <div class="col-12">
-                        <MudPaper Class="pa-4" Elevation="4">
-                            <h5>Bar Chart: Top Transactions (Amount vs Description)</h5>
-                            <MudChart ChartType="ChartType.Bar"
-                                      ChartSeries="@DynamicChartSeries"
-                                      YAxisLabels="@DynamicYAxisLabels"
-                                      Width="100%"
-                                      Height="350px" />
-                        </MudPaper>
-                    </div>
+                <div class="col-12">
+                    <MudPaper Class="pa-4" Elevation="4">
+                        <h5>Bar Chart: Top Transactions (Description vs Amount)</h5>
+                        <MudChart ChartType="ChartType.Bar" 
+                                  ChartSeries="@DynamicChartSeries" 
+                                  XAxisLabels="@DynamicXAxisLabels" 
+                                  YAxisLabels="@DynamicYAxisLabels" 
+                                  Width="100%" 
+                                  Height="350px" />
+                    </MudPaper>
                 </div>
+            </div>
+
+
+
+            
 
         </div>
         </div>
